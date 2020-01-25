@@ -18,10 +18,9 @@ var TEXT_STYLE = 'PT Mono';
 var TEXT_FIRST = 'Ура вы победили!';
 var TEXT_SECOND = 'Список результатов:';
 var COLOR_YOU = 'rgba(255, 0, 0, 1)';
-var timeY = CLOUD_X - FONT_GAP;
-var maxBar = GAP - CLOUD_X - TEXT_WIDTH - GAP;
+var TIME_Y = CLOUD_X - FONT_GAP;
+var MAX_BAR = GAP - CLOUD_X - TEXT_WIDTH - GAP;
 var BAR_Y = 247;
-
 
 var renderRectangle = function (ctx, x, y, width, height, color) {
   ctx.fillStyle = color;
@@ -39,7 +38,8 @@ var getMaxElement = function (arr) {
   return maxElement;
 };
 
-var getFinalText = function (ctx, text, x, y) {
+var getFinalText = function (ctx, text, x, y, color) {
+  ctx.fillStyle = color;
   ctx.fillText(text, x, y);
 };
 
@@ -48,29 +48,29 @@ var renderCloud = function (ctx) {
   renderRectangle(ctx, CLOUD_X, CLOUD_Y, CLOUD_WIDTH, CLOUD_HEIGHT, CLOUD_COLOR);
 };
 
+var getRandomNum = function (min, max) {
+  return Math.random() * (max - min) + min;
+};
+
 window.renderStatistics = function (ctx, names, times) {
   var maxTime = getMaxElement(times);
-  var getRandomNum = function (min, max) {
-    return Math.random() * (max - min) + min;
+
+  var renderBars = function (player, i) {
+    ctx.fillStyle = player === 'Вы' ? COLOR_YOU : 'hsl(230, ' + getRandomNum(10, 100) + '%, 40%)';
+    renderRectangle(ctx, CLOUD_X + TEXT_WIDTH + (CLOUD_X - GAP) * i, BAR_Y, BAR_HEIGHT, (MAX_BAR * times[i]) / maxTime);
+
+    getFinalText(ctx, Math.round(times[i]), CLOUD_X + TEXT_WIDTH + (CLOUD_X - GAP) * i, TIME_Y, TEXT_COLOR);
+    getFinalText(ctx, player, CLOUD_X + TEXT_WIDTH + (CLOUD_X - GAP) * i, CLOUD_HEIGHT - (CLOUD_Y) / 2, TEXT_COLOR);
   };
 
   renderCloud(ctx);
 
-  ctx.fillStyle = TEXT_COLOR;
   ctx.font = FONT_SIZE + TEXT_STYLE;
-  getFinalText(ctx, TEXT_FIRST, TEXT_X, TEXT_Y);
-  getFinalText(ctx, TEXT_SECOND, TEXT_X, TEXT_Y + FONT_SIZE);
+  getFinalText(ctx, TEXT_FIRST, TEXT_X, TEXT_Y, TEXT_COLOR);
+  getFinalText(ctx, TEXT_SECOND, TEXT_X, TEXT_Y + FONT_SIZE, TEXT_COLOR);
 
-
-  names.forEach(function (player, i) {
-
-    ctx.fillStyle = player === 'Вы' ? COLOR_YOU : 'hsl(230, ' + getRandomNum(10, 100) + '%, 40%)';
-    renderRectangle(ctx, CLOUD_X + TEXT_WIDTH + (CLOUD_X - GAP) * i, BAR_Y, BAR_HEIGHT, (maxBar * times[i]) / maxTime);
-
-    ctx.fillStyle = TEXT_COLOR;
-    ctx.fillText(Math.round(times[i]), CLOUD_X + TEXT_WIDTH + (CLOUD_X - GAP) * i, timeY / times[i] * maxTime);
-    ctx.fillText(player, CLOUD_X + TEXT_WIDTH + (CLOUD_X - GAP) * i, CLOUD_HEIGHT - (CLOUD_Y) / 2);
-  });
+  names.forEach(renderBars);
 
 
 };
+
