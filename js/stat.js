@@ -23,7 +23,6 @@ var maxBar = GAP - CLOUD_X - TEXT_WIDTH - GAP;
 var BAR_Y = 247;
 
 
-
 var renderRectangle = function (ctx, x, y, width, height, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, width, height);
@@ -61,7 +60,6 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.font = FONT_SIZE + TEXT_STYLE;
   getFinalText(ctx, TEXT_FIRST, TEXT_X, TEXT_Y);
   getFinalText(ctx, TEXT_SECOND, TEXT_X, TEXT_Y + FONT_SIZE);
-
 
 
   names.forEach(function (player, i) {
