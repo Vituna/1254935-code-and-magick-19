@@ -3,6 +3,7 @@
 var MIN_NAME_LENGTH = 2;
 var ESC_KEY = 'Escape';
 var ENTER_KEY = 'Enter';
+var HIDDEN = 'hidden';
 
 var WizardConfig = {
   WIZARD_NAMES: ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'],
@@ -26,6 +27,19 @@ var wizardCoatColor = wizardALL.querySelector('input[name="coat-color"]');
 var fireball = document.querySelector('.setup-fireball-wrap');
 var fireballColor = fireball.querySelector('input[name="fireball-color"]');
 
+var openPopup = function () {
+  setup.classList.toggle(HIDDEN);
+  document.addEventListener('keydown', onPopupEscPress);
+};
+
+var closePopup = function () {
+  setup.classList.toggle(HIDDEN);
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+setupOpen.addEventListener('click', openPopup);
+
+setupClose.addEventListener('click', closePopup);
 
 var onPopupEscPress = function (evt) {
   if (evt.key === ESC_KEY) {
@@ -33,35 +47,25 @@ var onPopupEscPress = function (evt) {
   }
 };
 
-var openPopup = function () {
-  setup.classList.remove('hidden');
-  document.addEventListener('keydown', onPopupEscPress);
-};
-
-var closePopup = function () {
-  setup.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
-};
-
-setupOpen.addEventListener('click', function () {
-  openPopup();
-});
-
-setupOpen.addEventListener('keydown', function (evt) {
+var openEnter = function (evt) {
   if (evt.key === ENTER_KEY) {
     openPopup();
   }
-});
+};
 
-setupClose.addEventListener('click', function () {
-  closePopup();
-});
-
-setupClose.addEventListener('keydown', function (evt) {
+var closeEnter = function (evt) {
   if (evt.key === ENTER_KEY) {
     closePopup();
   }
-});
+};
+
+setupOpen.addEventListener('keydown', openEnter);
+
+setupClose.addEventListener('keydown', closeEnter);
+
+setupOpen.addEventListener('click', openPopup);
+
+setupClose.addEventListener('click', closePopup);
 
 var getRandomItem = function (min, max, arr) {
 
@@ -75,7 +79,7 @@ var conclusionWizards = function (wizards) {
     fragment.appendChild(renderWizard(wizards[i]));
   }
   similarListElement.appendChild(fragment);
-  setup.querySelector('.setup-similar').classList.remove('hidden');
+  setup.querySelector('.setup-similar').classList.remove(HIDDEN);
 };
 
 var wizardsStirs = function () {
@@ -101,15 +105,11 @@ var renderWizard = function (wizard) {
   return wizardElement;
 };
 
-/* setup.classList.remove('hidden');*/
-
 conclusionWizards(wizardsStirs());
-
-/* document.querySelector('.setup-similar').classList.remove('hidden');*/
 
 var userNameInput = setup.querySelector('.setup-user-name');
 
-userNameInput.addEventListener('invalid', function () {
+var inputFieldHints = function () {
   if (userNameInput.validity.tooShort) {
     userNameInput.setCustomValidity('Имя должно состоять минимум из 2-х символов');
   } else if (userNameInput.validity.tooLong) {
@@ -119,17 +119,22 @@ userNameInput.addEventListener('invalid', function () {
   } else {
     userNameInput.setCustomValidity('');
   }
-});
+};
 
-userNameInput.addEventListener('input', function (evt) {
+var nameLength = function (evt) {
   var target = evt.target;
+
   if (target.value.length < MIN_NAME_LENGTH) {
     target.setCustomValidity('Имя должно состоять минимум из ' + MIN_NAME_LENGTH + '-х символов'
     );
   } else {
     target.setCustomValidity('');
   }
-});
+};
+
+userNameInput.addEventListener('invalid', inputFieldHints);
+
+userNameInput.addEventListener('input', nameLength);
 
 var getNextColor = function (colors, currentColor) {
   var currentColorIndex = colors.indexOf(currentColor);
