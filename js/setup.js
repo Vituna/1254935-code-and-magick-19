@@ -26,10 +26,12 @@ var wizardCoat = wizardALL.querySelector('.wizard-coat');
 var wizardCoatColor = wizardALL.querySelector('input[name="coat-color"]');
 var fireball = document.querySelector('.setup-fireball-wrap');
 var fireballColor = fireball.querySelector('input[name="fireball-color"]');
+var userNameInput = setup.querySelector('.setup-user-name');
+
 
 var openPopup = function () {
   setup.classList.toggle(HIDDEN);
-  document.addEventListener('keydown', onPopupEscPress);
+  document.addEventListener('keydown', openEnter);
 };
 
 var closePopup = function () {
@@ -107,15 +109,13 @@ var renderWizard = function (wizard) {
 
 conclusionWizards(wizardsStirs());
 
-var userNameInput = setup.querySelector('.setup-user-name');
-
 var inputFieldHints = function () {
   if (userNameInput.validity.tooShort) {
     userNameInput.setCustomValidity('Имя должно состоять минимум из 2-х символов');
   } else if (userNameInput.validity.tooLong) {
     userNameInput.setCustomValidity('Имя не должно превышать 25-ти символов');
   } else if (userNameInput.validity.valueMissing) {
-    userNameInput.setCustomValidity('Обязательное поле');
+    userNameInput.setCustomValidity('Обязатель');
   } else {
     userNameInput.setCustomValidity('');
   }
